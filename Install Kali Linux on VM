@@ -1,0 +1,59 @@
+Step 1: Downloading the ISO
+Go to www.kali.org -> Get Kali 
+-> Installer Images -> Download Installer
+
+Step 2: Building the VM
+- Open VirtualBox Manager -> Click New
+- Name the Virtual Machine -> 
+- Type: Linux 
+- Subtype: Debian -> 
+- Version Debian (64-bit)
+-> Go to Hardware section 
+- Add RAM, CPU 
+-> Go to Hard Disk section 
+- add HDD space
+-> Finish
+
+Step 3: VM Setup
+-> Go to Settings -> General -> Advanced
+- Change Shared Clipboard from Disabled to Bidirectional
+-> Go to Display -> Check the box for "Enable 3D Acceleration" -> Max Out Video Memory (for best performance)
+-> Go to Storage -> Under Controller: IDE click the "Empty" disk -> In Attributes section click the logo disk button Choose a virtual optical disk or a physical drive and select the Kali Linux ISO (the ISO you just downloaded)
+-> Go to Network -> Attached to -> Change from "NAT" to "Bridged Adapter" (makes Kali appear as a separate device on your home network, so it gets its own IP address (like your phone or laptop)) 
+- click Ok and Start the VM
+
+Step 4: Boot Installer
+- Choose Graphical Install
+- Language -> Location -> Keyboard
+- Give it a Hostname 
+- Domain name can be empty 
+- Name -> Username -> Password
+- Choose time zone 
+- Partition Disks - Guided - use entire disk (dividing the virtual hard disk into sections where Kali will store files. „Guided - use entire disk” does this automatically, which is easiest for beginners)
+- Choose the HDD you created and click Continue
+- All files in one partition 
+- Finish partitioning and write changes to disk
+- Write the changes to disks? Check "YES" and click Continue
+- Software selection -> Leave Default and click Continue (you choose what programs Kali will install. defaults include essential security tools, which are good for starting out. You don’t need to change anything unless you have specific tools in mind (we can add more later)
+- Installing.... 
+- Install the GRUB boot loader -> check Yes and click Continue -> choose the HDD
+- Reboot
+
+Step 5: Login, UPDATE, Settings 
+- Insert username and password
+- Open Terminal and write command "sudo apt update && sudo apt upgrade -y" (sudo apt update checks for new updates, and sudo apt upgrade -y installs them automatically. This keeps Kali safe and up to date)
+-> insert password
+- Reboot -> "sudo reboot now" -> Insert Password
+- Open terminal write "sudo apt-get install linux-headers-$(uname -r) (linux-headers are special files needed for adding features to Kali, like VirtualBox Guest Additions)
+- Insert Password
+- Press Y and Enter
+- Go to "Devices" in the VM bar  -> Insert Guest Additions CD image... (extra tools from VirtualBox that make Kali work better, better screen resolution, clipboard sharing)
+- Open the new folder on Desktop
+- Select all files and copy them to Documents
+- Open terminal and navigate to Documents "cd Documents"
+- Change permision and Run
+- "sudo chmod 777 VBoxLinuxAdditions.run"
+- "sudo ./VboxLinuxAdditions.run"
+- write "yes" and press enter
+
+Step 6: Reboot "sudo reboot now" and you are DONE!
