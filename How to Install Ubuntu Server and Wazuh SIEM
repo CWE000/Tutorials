@@ -1,0 +1,56 @@
+Step 1: Downloading Ubuntu Server ISO 
+- Go to www.ubuntu.com/download/server
+
+Step 2: Building the VM
+- Open VirtualBox Manager -> Click New
+- Name the Virtual Machine -> 
+- Select the ISO we just downloaded
+-> Go to Hardware section 
+- Add RAM, CPU 
+-> Go to Hard Disk section 
+- add HDD space
+-> Finish
+
+Step 3: Start the VM.
+- Installation started...
+- Login when done
+
+Step 4: UPDATE, Settings 
+- Install updates with command: "sudo apt update && sudo apt upgrade -y"
+- Allow SSH into firewall with command: "sudo ufw allow ssh"
+- Turn on firewall with command: "sudo ufw enable"
+- Check Firewall status with command: "sudo ufw status"
+
+Step 5: Get Ubuntu server on the same network
+- On VirtualBox Manager windows click Files -> Tools -> Network Manager (or CTRL + H) 
+- Go to NAT Networks tab and click Create (You can also rename it if you want)
+- On BOTH VM go to Settings -> Network -> and change Attached to: NAT Network 
+
+Step 6: SSH to Ubuntu server
+- Find IP ADDR of Ubuntu Server with command: "ip addr"
+- SSH into it with command: "ssh username@ipaddr -p 22"
+- If you get "Connection refused"
+- Check ssh status on Ubuntu server with command: 
+"sudo systemctl status ssh" - if SSH not installed - Install SSH with command: "sudo apt install openssh-server"
+- SSH into it again :)
+
+Step 7: Installing Wazuh SIEM
+- Download and install Wazuh with command:
+"curl -sO https://packages.wazuh.com/4.8/wazuh-install.sh && sudo bash ./wazuh-install.sh -a"
+- Write down your username and password you receive at the end of the installation
+- Open Ports for Wazuh with commands : 
+sudo ufw allow 443/tcp
+sudo ufw allow 1514/tcp
+sudo ufw allow 1515/tcp
+- Open browser and access https://ipaddr of Ubuntu server
+- Login with username and password you got
+Done
+
+Step 8: Add Wazuh Agent
+- Enable agent with command: "sudo systemctl enable Wazuh-agent"
+- Check Wazuh-agent status with command: 
+"sudo systemctl status Wazuh-agent"
+- Start Wazuh-agent with command: 
+"sudo systemctl start Wazuh-agent"
+- Check agent status with command: status Wazuh-agent
+- Refresh. Agent is active. Congratulations
