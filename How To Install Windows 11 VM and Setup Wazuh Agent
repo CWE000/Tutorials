@@ -1,0 +1,33 @@
+# Install Windows 11 Virtual Machine and add it to a Wazuh Lab
+
+### Step 1: Download and Create the Windows 11 VM
+- Download the ISO: Go to https://www.microsoft.com/en-us/software-download/windows11 and download Download Windows 11 Disk Image (ISO) for x64 devices
+- Create a New VM: In VirtualBox, click "New".
+- Give it a name.
+- Select the Windows 11 ISO you just downloaded.
+- Go to Hardware tab: Allocate at least 4GB of RAM and 2-4 CPU cores.
+- Go to Hard Disk tab: Create a virtual hard disk of at least 60GB.
+- Follow the on-screen graphical installer to complete the setup.
+
+### Step 2: Setup
+- Install Guest Additions: In the VM window menu, go to "Devices" -> "Insert Guest Additions CD image...". Inside Windows, open File Explorer, go to the new CD drive, and run "VBoxWindowsAdditions-amd64.exe".
+- Windows Update: Go to "Settings" -> "Windows Update" and click "Check for updates".
+- Configure the Network: Shut down the Windows VM. In VirtualBox, go to the VM's "Settings" -> "Network". Change "Attached to:" to "NAT Network" and select your lab's network.
+
+### Step 3: Deploy the Wazuh Agent
+- Disable Firewall (so it don't block install process): Start the Windows VM. Go to "Start Menu" -> "Windows Security" -> "Firewall & network protection". Click on the **(active)** network profile and turn the Microsoft Defender Firewall **Off**. *(This is done to simplify the initial agent connection. In a production environment, you would create specific firewall rule)   
+- Generate the Command: In Wazuh dashboard, go to "Endpoints Summary" -> "Deploy new agent".
+  - Select Windows as the OS.
+  - Enter the Wazuh server IP (10.0.2.4).
+  - Give the agent a name.
+  - Copy the generated PowerShell command.
+  - On the Windows VM, click "Start Menu", type "PowerShell", right-click it, and select "Run as administrator".
+  - Troubleshooting: If you can't paste, enable "Devices" -> "Shared Clipboard" -> "Bidirectional" in the VM window.
+  - Paste the command into PowerShell and press Enter.
+  - Start the agent with command: "NET START WazuhSvc"
+
+### Step 4: Verify the Connection
+- Go back to your Wazuh dashboard and refresh the "Endpoints Summary" page.
+- After a minute, you should see your new agent appear in the list with an "Active" status.
+
+Congratulations! You now Installed a Windows 11 Virtual Machine and monitoring it with Wazuh.
