@@ -2,11 +2,13 @@ Step 1: Check if virtualization is enable
 - Open task manager (CTRL+SHIFT+ESC)
 - Go to performance
 - Check if virtualization is enable
+
 Step 2: Download and install virtual box.
 - Go to https://www.virtualbox.org
 - Click download
 - Choose your host (win/mac/Linux)
 - Open installer > Next > Accept terms > Next > Next > Yes > Yes > Next > Install
+
 Step 3: Download and install Ubuntu Server
 - Download Ubuntu server ISO https://ubuntu.com/download/server
 - Click download 
