@@ -14,7 +14,7 @@ Enable Wazuh to proactively scan our new agent for known vulnerabilities (CVEs).
     "sudo nano /var/ossec/etc/ossec.conf"
   - Search for the "<vulnerability-detector>" section and replace it with the block below. Replace "CODENAME" with the actual codename you found.
     <vulnerability-detector>
-      ```<enabled>yes</enabled>
+      <enabled>yes</enabled>
       <interval>5m</interval>
       <run_on_start>yes</run_on_start>
       <provider name="canonical">
@@ -22,7 +22,7 @@ Enable Wazuh to proactively scan our new agent for known vulnerabilities (CVEs).
         <os>CODENAME</os>
         <update_interval>1h</update_interval>
       </provider>
-    </vulnerability-detector>```
+    </vulnerability-detector>
   - Save and close the file.
 - Restart Wazuh and Verify
   - To apply the changes, restart the Wazuh manager service:
