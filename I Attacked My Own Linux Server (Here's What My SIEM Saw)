@@ -1,0 +1,67 @@
+# Tutorial: Simulating a Brute-Force Attack & Detecting it with Wazuh
+
+In this guide, I'll walk through a full Red Team vs. Blue Team scenario. I will first configure our Wazuh SIEM to detect vulnerabilities, then launch a brute-force attack from a Kali Linux machine against an unpatched Ubuntu server, and finally, analyze the real-time alerts generated in the Wazuh dashboard.
+
+### Step 1: Configuring Wazuh for Vulnerability Detection (Blue Team)
+Enable Wazuh to proactively scan our new agent for known vulnerabilities (CVEs).
+- Find the Target's OS Codename
+  - SSH into your target machine and run the following command to find its version codename.
+    "lsb_release -a"
+  - Note the Codename: ("noble" for Ubuntu 24.04).
+- Configure the Wazuh Manager
+  - SSH into your Wazuh Manager server.
+  - Open the main configuration file with a text editor:
+    "sudo nano /var/ossec/etc/ossec.conf"
+  - Search for the "<vulnerability-detector>" section and replace it with the block below. Replace "CODENAME" with the actual codename you found.
+    <vulnerability-detector>
+      ```<enabled>yes</enabled>
+      <interval>5m</interval>
+      <run_on_start>yes</run_on_start>
+      <provider name="canonical">
+        <enabled>yes</enabled>
+        <os>CODENAME</os>
+        <update_interval>1h</update_interval>
+      </provider>
+    </vulnerability-detector>```
+  - Save and close the file.
+- Restart Wazuh and Verify
+  - To apply the changes, restart the Wazuh manager service:
+    "sudo systemctl restart wazuh-manager"
+  - After 1-2 minutes, go to your Wazuh dashboard. Navigate to "Threat intelligence" > "Vulnerability Detection" to see the list of discovered vulnerabilities.
+---
+### Step 2: Reconnaissance with Nmap (Red Team)
+Now, we switch to the attacker's perspective on the Kali Linux machine. First goal is to see what services are open on the target.
+- Run the Nmap Scan
+  - Open a terminal on your Kali machine and run the following command, replacing `<target_ip>` with the IP of your `ubuntuvuln` machine (e.g., `10.0.2.15`).
+    "nmap -sV <target_ip>"
+  - This command scans for open ports and the "-sV" flag attempts to determine the version of the service running on those ports. We are looking for an entry point, like an open SSH port (Port 22).
+---
+### Step 3: Brute-Force Attack with Hydra (Red Team)
+We've found an open SSH port. Now we'll try to guess the password for a user.
+- For this demonstration to work quickly, we'll first set a weak password on the target. SSH into VM.
+    - On the machine
+    "sudo passwd <your_username>"
+    - When prompted, set the password to "password123"
+- Launch the Attack
+  - On your Kali machine, run the Hydra command to start the brute-force attack.
+    "hydra -l <your_username> -P <wordlist_location> <target_ip> ssh" 
+  - "-l <your_username>": Specifies the login/user to target.
+  - "-P <wordlist_location>": Specifies the password list file.
+  - "<target_ip> ssh": Specifies the target IP and the service to attack.
+  - Hydra will run and should quickly find the correct password.
+---
+### Step 4: Analyzing the Alerts in Wazuh (Blue Team)
+While the attacker celebrates their success, the defender's SIEM has been watching.
+- Check the Dashboard
+  - Go back to your Wazuh dashboard in your browser.Navigate to "Security operations" > "Events".
+  - You should see a large number of new alerts, primarily with the description "sshd: authentication failed." This is the direct result of Hydra's attempts.
+- Dissect an Alert
+  - Click on one of the alerts to see the details. You can clearly see:
+    - "agent.name": The target of the attack (`ubuntuvuln-target`).
+    - "data.srcip": The source of the attack (your Kali machine's IP).
+    - "data.dstuser": The user account that was targeted.
+    - "rule.firedtimes": A high number, indicating an automated, repeated attempt.
+    - "rule.mitre.technique": "Password Guessing", mapping the event to the MITRE ATT&CK framework.
+---
+### Conclusion & Next Steps
+Congratulations! You have successfully simulated a full attack-and-detect cycle. You configured Wazuh to find vulnerabilities, used Red Team tools to gain access, and saw how the Blue Team can use Wazuh to detect this activity in real-time.
